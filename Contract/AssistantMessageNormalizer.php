@@ -35,13 +35,19 @@ final class AssistantMessageNormalizer extends ModelContractNormalizer
         }
 
         if ($data->hasToolCalls()) {
+            $toolCall = $data->getToolCalls()[0];
             $normalized['functionCall'] = [
-                'id' => $data->getToolCalls()[0]->getId(),
-                'name' => $data->getToolCalls()[0]->getName(),
+                'id' => $toolCall->getId(),
+                'name' => $toolCall->getName(),
             ];
 
-            if ($data->getToolCalls()[0]->getArguments()) {
-                $normalized['functionCall']['args'] = $data->getToolCalls()[0]->getArguments();
+            if ($toolCall->getArguments()) {
+                $normalized['functionCall']['args'] = $toolCall->getArguments();
+            }
+
+            $metadata = $toolCall->getMetadata();
+            if (isset($metadata['thoughtSignature'])) {
+                $normalized['thoughtSignature'] = $metadata['thoughtSignature'];
             }
         }
 

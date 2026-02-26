@@ -124,7 +124,10 @@ final class ResultConverter implements ResultConverterInterface
         // If any part is a function call, return it immediately and ignore all other parts.
         foreach ($contentParts as $contentPart) {
             if (isset($contentPart['functionCall'])) {
-                return new ToolCallResult($this->convertToolCall($contentPart['functionCall']));
+                return new ToolCallResult($this->convertToolCall(
+                    $contentPart['functionCall'],
+                    $contentPart['thoughtSignature'] ?? null,
+                ));
             }
         }
 
@@ -170,9 +173,14 @@ final class ResultConverter implements ResultConverterInterface
      *     args: mixed[]
      * } $toolCall
      */
-    private function convertToolCall(array $toolCall): ToolCall
+    private function convertToolCall(array $toolCall, ?string $thoughtSignature = null): ToolCall
     {
-        return new ToolCall($toolCall['id'] ?? '', $toolCall['name'], $toolCall['args']);
+        $metadata = [];
+        if (null !== $thoughtSignature) {
+            $metadata['thoughtSignature'] = $thoughtSignature;
+        }
+
+        return new ToolCall($toolCall['id'] ?? '', $toolCall['name'], $toolCall['args'], $metadata);
     }
 
     /**
