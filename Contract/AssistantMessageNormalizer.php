@@ -12,6 +12,7 @@
 namespace Symfony\AI\Platform\Bridge\Gemini\Contract;
 
 use Symfony\AI\Platform\Bridge\Gemini\Gemini;
+use Symfony\AI\Platform\Bridge\Gemini\ThoughtSignatureStore;
 use Symfony\AI\Platform\Contract\Normalizer\ModelContractNormalizer;
 use Symfony\AI\Platform\Message\AssistantMessage;
 use Symfony\AI\Platform\Model;
@@ -45,9 +46,9 @@ final class AssistantMessageNormalizer extends ModelContractNormalizer
                 $normalized['functionCall']['args'] = $toolCall->getArguments();
             }
 
-            $metadata = $toolCall->getMetadata();
-            if (isset($metadata['thoughtSignature'])) {
-                $normalized['thoughtSignature'] = $metadata['thoughtSignature'];
+            $thoughtSignature = ThoughtSignatureStore::get($toolCall);
+            if (null !== $thoughtSignature) {
+                $normalized['thoughtSignature'] = $thoughtSignature;
             }
         }
 

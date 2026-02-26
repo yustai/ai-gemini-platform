@@ -12,6 +12,7 @@
 namespace Symfony\AI\Platform\Bridge\Gemini\Gemini;
 
 use Symfony\AI\Platform\Bridge\Gemini\Gemini;
+use Symfony\AI\Platform\Bridge\Gemini\ThoughtSignatureStore;
 use Symfony\AI\Platform\Exception\RateLimitExceededException;
 use Symfony\AI\Platform\Exception\RuntimeException;
 use Symfony\AI\Platform\Model;
@@ -175,12 +176,13 @@ final class ResultConverter implements ResultConverterInterface
      */
     private function convertToolCall(array $toolCall, ?string $thoughtSignature = null): ToolCall
     {
-        $metadata = [];
+        $result = new ToolCall($toolCall['id'] ?? '', $toolCall['name'], $toolCall['args']);
+
         if (null !== $thoughtSignature) {
-            $metadata['thoughtSignature'] = $thoughtSignature;
+            ThoughtSignatureStore::store($result, $thoughtSignature);
         }
 
-        return new ToolCall($toolCall['id'] ?? '', $toolCall['name'], $toolCall['args'], $metadata);
+        return $result;
     }
 
     /**
