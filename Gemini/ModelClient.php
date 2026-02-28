@@ -61,6 +61,14 @@ final class ModelClient implements ModelClientInterface
         unset($generationConfig['generationConfig']['tools']);
         unset($generationConfig['generationConfig']['server_tools']);
 
+        // thinkingConfig is a top-level request field, not part of generationConfig
+        if (isset($generationConfig['generationConfig']['thinkingBudget'])) {
+            $generationConfig['thinkingConfig'] = [
+                'thinkingBudget' => $generationConfig['generationConfig']['thinkingBudget'],
+            ];
+            unset($generationConfig['generationConfig']['thinkingBudget']);
+        }
+
         if ([] === $generationConfig['generationConfig']) {
             $generationConfig = [];
         }
