@@ -87,7 +87,11 @@ final class ResultConverter implements ResultConverterInterface
                 continue;
             }
 
-            yield $choices[0]->getContent();
+            if ($choices[0] instanceof ToolCallResult) {
+                yield $choices[0];
+            } else {
+                yield $choices[0]->getContent();
+            }
         }
     }
 
