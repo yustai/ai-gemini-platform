@@ -49,10 +49,12 @@ final class ModelClient implements ModelClientInterface
             throw new InvalidArgumentException(\sprintf('Payload must be an array, but a string was given to "%s".', self::class));
         }
 
+        $isStreaming = $options['stream'] ?? false;
+
         $url = \sprintf(
             'https://generativelanguage.googleapis.com/v1beta/models/%s:%s',
             $model->getName(),
-            $options['stream'] ?? false ? 'streamGenerateContent' : 'generateContent',
+            $isStreaming ? 'streamGenerateContent?alt=sse' : 'generateContent',
         );
 
         if (isset($options[PlatformSubscriber::RESPONSE_FORMAT]['json_schema']['schema'])) {
